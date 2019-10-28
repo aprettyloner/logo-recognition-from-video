@@ -75,7 +75,7 @@ def parse_image(imagepath,grey=False):
     raw_image = tf.io.read_file(imagepath)
     # image = tf.image.decode_jpeg(raw_image, channels=3)   
     
-    fig,axes = plt.subplots(1,3)
+    fig,axes = plt.subplots(1,3,figsize=(20,6))
     
     image = preprocess_image(raw_image)
     axes[0].imshow(image)
@@ -105,7 +105,7 @@ def parse_image(imagepath,grey=False):
 
     first_digit_blurred = apply_convolution_to_image(tf.image.rgb_to_grayscale(image), gaussian_filter)
 
-    fig, axs = plt.subplots(1, 3, figsize=(10, 6))
+    fig, axs = plt.subplots(1, 3, figsize=(20,6))
 
     plot_convolution(image, gaussian_filter, first_digit_blurred, axs)
     for ax in axs.flatten():
