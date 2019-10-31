@@ -23,7 +23,7 @@ Logo detection and recognition from advertisement videos using OpenCV and Tensor
 
 
 
-### 3b) Apply Gaussian filter to iamge
+### 3b) Apply Gaussian filter to image
 <img src='img/filter_convolution.png'>Gaussian filter (5x5) on grayscale image.</img>
 
 

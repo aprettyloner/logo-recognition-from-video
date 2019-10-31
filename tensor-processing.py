@@ -52,7 +52,7 @@ def load_and_preprocess_image(path):
 def apply_convolution_to_image(image,
                                convolutional_filter, 
                                image_shape=(576, 576),
-                               filter_shape = (5, 5)):
+                               filter_shape = (5, 5),gray=True):
     """Apply a convolutional filter to an image.  The inputs here should be
     numpy arrays, this function will take care of converting them to tensors
     and back.
@@ -60,8 +60,13 @@ def apply_convolution_to_image(image,
     # The image and filter tensor must be 4-tensors to use conv2d.  This
     # will eventually make sense, as we build up the complexity of our
     # filters.
-    image_tensor = np.array(image).reshape(1, image_shape[0], image_shape[1], 1)
-    filter_tensor = convolutional_filter.reshape(filter_shape[0], filter_shape[1], 1, 1)
+    if gray:
+        channels=1
+    else:
+        channels=3
+    convolutional_filter = np.tile(convolutional_filter,channels)
+    image_tensor = np.array(image).reshape(1, image_shape[0], image_shape[1], channels)
+    filter_tensor = convolutional_filter.reshape(filter_shape[0], filter_shape[1], channels, 1)
     convolved_tensor = tf.nn.conv2d(input=image_tensor, 
                                     filters=filter_tensor, 
                                     strides=[1, 1, 1, 1], 
@@ -103,14 +108,28 @@ def parse_image(imagepath,grey=False):
         ax.grid(False)
     plt.show()
 
-    first_digit_blurred = apply_convolution_to_image(tf.image.rgb_to_grayscale(image), gaussian_filter)
+    # grey_blurred = apply_convolution_to_image(tf.image.rgb_to_grayscale(image), gaussian_filter)
+
+    # fig, axs = plt.subplots(1, 3, figsize=(20,6))
+
+    # plot_convolution(image, gaussian_filter, grey_blurred, axs)
+    # for ax in axs.flatten():
+    #     ax.grid(False)
+    # plt.show()
+
+
+
+    color_blurred = apply_convolution_to_image(image, gaussian_filter,gray=False)
 
     fig, axs = plt.subplots(1, 3, figsize=(20,6))
 
-    plot_convolution(image, gaussian_filter, first_digit_blurred, axs)
+    plot_convolution(image, gaussian_filter, color_blurred, axs)
     for ax in axs.flatten():
         ax.grid(False)
     plt.show()
+    
+    
+
     return 0
 
 
@@ -124,7 +143,7 @@ def plot_convolution(before, convolutional_filter, after, axs):
     axs[0].set_title("Before Convolution")
     axs[1].imshow(convolutional_filter, cmap=plt.cm.gray_r, interpolation="nearest")
     axs[1].set_title("Filter")
-    axs[2].imshow(after, cmap=plt.cm.gray_r, interpolation="nearest")
+    axs[2].imshow(after, cmap = 'jet',interpolation="nearest")
     axs[2].set_title("After Convolution")
 
 def count_seg(filename):
